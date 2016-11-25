@@ -8,15 +8,36 @@
 #include <sys/fcntl.h>
 #include <errno.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #include "queue.h"
 #include "data.h"
 
 #define DATA_SIZE 1024
+
+/***global***/
 extern int errno;
+extern QUEUE_head *reg;
+extern sem_t reg_sem;
+/***********/
 
 void *deal_register(void *arg){
-	
+	QUEUE_node *node = NULL;
+	while(1){
+		if(reg->count > 0){
+			sem_wait(&reg_sem);
+			node = out_que(reg);
+			sem_post(&reg_sem);
+			if(node == NULL){
+				perror("can not get reg queue data!");
+				continue;
+			}
+			/*
+				判断是否合法，回复注册成功报文。
+			*/
+			free(node);
+		}
+	}
 	return NULL;
 }
 
@@ -41,6 +62,9 @@ void handle_recv(char *buf,int len,int connfd){
 	printf("%s\n",buf);
 	switch(buf[3]){
 		case 1:
+			//
+			add_que(reg,buf,len,connfd);
+			//
 			break;
 		case 3:
 			break;

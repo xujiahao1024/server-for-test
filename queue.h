@@ -19,7 +19,7 @@ typedef struct queue{
 
 extern int init_que(QUEUE_head **head);
 
-extern int add_que(QUEUE_head *head,char *buf,int len,int pid);
+extern int add_que(QUEUE_head *head,char *buf,int len,int connfd);
 
 extern QUEUE_node *out_que(QUEUE_head *head);
 
