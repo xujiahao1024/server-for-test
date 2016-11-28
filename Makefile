@@ -1,4 +1,4 @@
-SRC += server.c main.c queue.c deal.c
+SRC += server.c main.c queue.c deal.c cmd_thread.c
 OBJ = $(SRC:%.c=%.o)
 CC = gcc
 EXEC_NAME = server

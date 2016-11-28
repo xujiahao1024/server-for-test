@@ -9,6 +9,8 @@ typedef struct qlink{
 	struct qlink *next;
 	char data[BUFSIZE];
 	int connfd;
+	int sn;
+	int heart;
 }QUEUE_node;
 
 typedef struct queue{
@@ -19,7 +21,7 @@ typedef struct queue{
 
 extern int init_que(QUEUE_head **head);
 
-extern int add_que(QUEUE_head *head,char *buf,int len,int connfd);
+extern int add_que(QUEUE_head *head,char *buf,int len,int connfd,int sn,int heart);
 
 extern QUEUE_node *out_que(QUEUE_head *head);
 

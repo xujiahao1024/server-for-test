@@ -17,8 +17,10 @@
 
 /***global***/
 extern int errno;
-extern QUEUE_head *reg;
-extern sem_t reg_sem;
+extern QUEUE_head *reg;				//注册队列
+extern QUEUE_head *status;			//状态队列
+extern sem_t reg_sem;				//注册用信号量
+extern sem_t sta_sem;				//状态用信号量
 /***********/
 
 void *deal_register(void *arg){
@@ -33,7 +35,7 @@ void *deal_register(void *arg){
 				continue;
 			}
 			/*
-				判断是否合法，回复注册成功报文。
+				判断是否合法，回复注册成功报文，记录connfd
 			*/
 			free(node);
 		}
@@ -62,9 +64,9 @@ void handle_recv(char *buf,int len,int connfd){
 	printf("%s\n",buf);
 	switch(buf[3]){
 		case 1:
-			//
-			add_que(reg,buf,len,connfd);
-			//
+			sem_wait(&reg_sem);
+			add_que(reg,buf,len,connfd,0,0);
+			sem_post(&reg_sem);
 			break;
 		case 3:
 			break;

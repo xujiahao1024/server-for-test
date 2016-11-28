@@ -24,7 +24,7 @@ int init_que(QUEUE_head **head){
 	return 0;
 }
 
-int add_que(QUEUE_head *head,char *buf,int len,int connfd){
+int add_que(QUEUE_head *head,char *buf,int len,int connfd,int sn,int heart){
 	if(head->count >= head->size){
 		printf("queue is full!\n");
 		return -1;
@@ -36,9 +36,12 @@ int add_que(QUEUE_head *head,char *buf,int len,int connfd){
 		perror("add error!");
 		return -1;
 	}
+	memset(node,0,sizeof(QUEUE_node));
 	
 	memcpy(node->data,buf,len);
 	node->connfd = connfd;
+	node->sn = sn;
+	node->heart = heart;
 	
 	if(head->hnode.next == NULL){
 		head->hnode.next = node;
