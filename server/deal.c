@@ -95,8 +95,10 @@ void deal_recv(int connfd,fd_set *fds){
 
 //πÿ±’¡¨Ω”
 void closesock(int connfd,fd_set *fds){
+	printf("connfd -- %d\n",connfd);
 	close(connfd);
 	FD_CLR(connfd,fds);
+printf("after clear fds\n");
 	sem_wait(&heartdet_sem);
 	del_stalink(&status,connfd);	
 	sem_post(&heartdet_sem);
@@ -110,7 +112,7 @@ void deal_recv_error(int ret,int connfd,fd_set *fds){
 	}
 	else{
 		if(errno == 104){
-			printf("the client disconnect\n");
+			printf("the client disconnect 104\n");
 			closesock(connfd,fds);
 		}
 		else if(errno == ETIMEDOUT | errno == EHOSTUNREACH){

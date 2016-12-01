@@ -85,6 +85,7 @@ int add_stalink(STATUS **head,int connfd,int apid,int heart){
 		(*head)->heart = heart;
 		(*head)->apid = apid;
 		(*head)->next = NULL;
+printf("head connfd %d\n",(*head)->connfd);
 		return 0;
 	}
 	
@@ -98,29 +99,48 @@ int add_stalink(STATUS **head,int connfd,int apid,int heart){
 	node->apid = apid;
 	node->next = NULL;
 	STATUS *move = *head;
-	while(move->next != NULL){
+	STATUS *pre = *head;
+
+	if((move->next == NULL)&&(apid < move->apid)){
+		node->next = move;
+		*head = node;
+	}
+	
+	while(move != NULL){
+		if(apid < move->apid)
+			break;
+		pre = move;
 		move = move->next;  
 	}
-	move->next = node;
-	
+	if(move != NULL){
+		pre->next = node;
+		node->next = move;
+	}
+	else{
+		pre->next = node;
+	}
+printf("2 head connfd %d\n",(*head)->connfd);	
 	return 0;
 }
 
 //根据链接套接字删除一个节点
 int del_stalink(STATUS **head,int connfd){
+printf("in deal connfd %d\n",connfd);
 	if(head == NULL){
 		printf("the stalink is empty\n");
 		return -1;
 	}
 	STATUS *node = *head;
 	STATUS *pre = *head;
-	
+//删除头结点
 	if(node->connfd == connfd){
 		*head = node->next;
 		free(node);
+		node = NULL;
 		return 0;
 	}
-	while(node == NULL){
+//删除中间节点
+	while(node != NULL){
 		if(node->connfd == connfd)
 			break;
 		pre = node;
@@ -130,7 +150,9 @@ int del_stalink(STATUS **head,int connfd){
 		return -1;
 	pre->next = node->next;
 	free(node);
-	
+	node = NULL;
+	//pre = NULL;
+
 	return 0;
 }
 
@@ -215,6 +237,8 @@ STATUS *selectapid_stalink(STATUS *head,int apid){
 	if(move == NULL)
 		return NULL;
 }
+
+
 
 //获得当前最小可用apid
 int getapid_stalink(STATUS *head){
